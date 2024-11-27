@@ -1,111 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Video Trigger Demo</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        section {
-            height: 50vh;
-            width: 50vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #ddd;
-            margin: 10px 0;
-            padding: 10px;
-        }
-        video {
-            width: 60%;
-            outline: none;
-        }
-        button {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            padding: 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <button id="playAll">Click to Enable Videos</button>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f8f9fa; /* Optional: adds a subtle background */
+      }
 
-    <section id="on-load">
-        <h4>Auto-play on page load</h4>
-        <video id="video1" src="video.mp4" muted autoplay playsinline loop></video>
-    </section>
-    <section id="on-hover">
-        <h4>Auto-play when hovering over the video</h4>
-        <video id="video3" src="video.mp4" muted playsinline loop></video>
-    </section>
-    <section id="on-click">
-        <h4>Auto-play when clicking anywhere on the website</h4>
-        <video id="video4" src="video.mp4" muted playsinline loop></video>
-    </section>
-    <section id="after-time">
-        <h4>Auto-play after 3 seconds</h4>
-        <video id="video5" src="video.mp4" muted playsinline loop></video>
-    </section>
-    <section id="on-scroll">
-        <h4>Auto-play when scrolling to the video</h4>
-        <video id="video2" src="video.mp4" muted playsinline loop></video>
-    </section>
+      .center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      section {
+        height: 500px;
+        width: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #ddd;
+        margin: 10px 0;
+        padding: 10px;
+      }
+
+      video {
+        width: 60%;
+        outline: none;
+      }
+
+      button {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      h4 {
+        padding: 15px 15px 15px 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="center">
+      <div>
+        <h2>Non-User Interaction</h2>
+        <section id="on-load">
+          <h4>Auto-play on page load</h4>
+          <video id="video1" src="video.mp4" muted autoplay playsinline loop></video>
+        </section>
+        <section id="after-time">
+          <h4>Auto-play after 5 seconds</h4>
+          <video id="video5" src="video.mp4" muted playsinline loop></video>
+        </section>
+      </div>
+
+      <div>
+        <h2>User Interaction</h2>
+        <section id="on-hover">
+          <h4>Auto-play when hovering over the video</h4>
+          <video id="video3" src="video.mp4" muted playsinline loop></video>
+        </section>
+        <section id="on-click">
+          <h4>Auto-play when clicking anywhere on the website</h4>
+          <video id="video4" src="video.mp4" muted playsinline loop></video>
+        </section>
+        <section id="on-scroll">
+          <h4>Auto-play when scrolling to the video</h4>
+          <video id="video2" src="video.mp4" muted playsinline loop></video>
+        </section>
+      </div>
+    </div>
 
     <script>
-        // Allow all videos to play after a user interaction
-        const playButton = document.getElementById('playAll');
-        playButton.addEventListener('click', () => {
-            const videos = document.querySelectorAll('video');
-            videos.forEach(video => {
-                video.play().catch(error => console.error('Play failed:', error.message));
-            });
-            playButton.style.display = 'none'; // Hide the button after interaction
-        });
+      window.addEventListener('load', () => {
+        const video1 = document.getElementById('video1');
+        video1.play().catch((error) => console.error('Auto-play failed (on load):', error.message));
+      });
 
-        // 1. Auto-play on page load
-        window.addEventListener('load', () => {
-            const video1 = document.getElementById('video1');
-            video1.play().catch(error => console.error('Auto-play failed (on load):', error.message));
+      const video2 = document.getElementById('video2');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            video2.play().catch((error) => console.error('Scroll play failed:', error.message));
+          }
         });
+      });
+      observer.observe(video2);
 
-        // 2. Auto-play when scrolling to the video
-        const video2 = document.getElementById('video2');
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    video2.play().catch(error => console.error('Scroll play failed:', error.message));
-                }
-            });
-        });
-        observer.observe(video2);
+      const video3 = document.getElementById('video3');
+      video3.addEventListener('mouseenter', () => {
+        video3.play().catch((error) => console.error('Hover play failed:', error.message));
+      });
 
-        // 3. Auto-play when hovering over the video
-        const video3 = document.getElementById('video3');
-        video3.addEventListener('mouseenter', () => {
-            video3.play().catch(error => console.error('Hover play failed:', error.message));
-        });
+      document.body.addEventListener('click', () => {
+        const video4 = document.getElementById('video4');
+        video4.play().catch((error) => console.error('Click play failed:', error.message));
+      });
 
-        // 4. Auto-play when clicking anywhere on the website
-        document.body.addEventListener('click', () => {
-            const video4 = document.getElementById('video4');
-            video4.play().catch(error => console.error('Click play failed:', error.message));
-        });
-
-        // 5. Auto-play after 3 seconds
-        setTimeout(() => {
-            const video5 = document.getElementById('video5');
-            video5.play().catch(error => console.error('Auto-play failed (after 3 seconds):', error.message));
-        }, 3000);
+      setTimeout(() => {
+        const video5 = document.getElementById('video5');
+        video5.play().catch((error) => console.error('Auto-play failed (after 5 seconds):', error.message));
+      }, 5000);
     </script>
-</body>
+  </body>
 </html>
